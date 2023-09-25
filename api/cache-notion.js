@@ -5,7 +5,7 @@ const { promisify } = require('util');
 
 const NOTION_API_KEY = "secret_L5EkN7Il9rEm9QfPNKRx8Lca5Q6m0sfyvK9yoYMtw9Z";
 const NOTION_DATABASE_ID = "c68a45e247104d2c9099c729477cda69";
-const REDIS_URL = "redis://quizguru-vercel:bNhwb7uv6qzZM18-n@redis-18451.c59.eu-west-1-2.ec2.cloud.redislabs.com:18451";
+const REDIS_URL = "redis://quizguru-vercel:IIuSfHkcVpvomp5xmseznUHjqXAaxn71@redis-18451.c59.eu-west-1-2.ec2.cloud.redislabs.com:18451";
 
 module.exports = async (req, res) => {
   try {
