@@ -1,0 +1,12 @@
+{
+  "name": "my-vercel-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "axios": "^0.24.0"
+  }
+}
