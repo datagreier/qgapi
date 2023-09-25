@@ -2,7 +2,7 @@ const axios = require('axios');
 
 module.exports = async (req, res) => {
   try {
-    res.setHeader('Access-Control-Allow-Origin', 'https://real-walkthroughs-117669.framer.app'); // URL for CORS
+    res.setHeader('Access-Control-Allow-Origin', 'https://understanding-mindset-199402.framer.app'); // URL for CORS
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate'); // Added Caching
