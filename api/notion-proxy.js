@@ -1,8 +1,12 @@
-// api/notion-proxy.js
 const axios = require('axios');
 
 module.exports = async (req, res) => {
   try {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', 'https://real-walkthroughs-117669.framer.app'); // Replace 'your-website-url' with the actual URL of your site
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
     const notionUrl = "https://api.notion.com/v1/databases/c68a45e247104d2c9099c729477cda69/query";
     const apiKey = "secret_L5EkN7Il9rEm9QfPNKRx8Lca5Q6m0sfyvK9yoYMtw9Z";
     
