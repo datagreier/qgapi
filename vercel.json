@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "cache-notion": {
+      "maxDuration": 59 // Set the timeout to 59 seconds (adjust as needed)
+    }
+  }
+}
