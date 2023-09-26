@@ -25,13 +25,13 @@ async function cacheNotionDataToRedis() {
 
     // Paginate through all pages in Notion database
     while (hasNextPage) {
-      console.log('Fetching data from Notion API...');
+      console.error('Fetching data from Notion API...'); // Log to Vercel logs
       const notionResponse = await axios.post(
         notionUrl,
         startCursor ? { start_cursor: startCursor } : {},
         { headers }
       );
-      console.log('Data received from Notion:', notionResponse.data);
+      console.error('Data received from Notion:', notionResponse.data); // Log to Vercel logs
 
       allData = allData.concat(notionResponse.data.results);
       
@@ -40,12 +40,12 @@ async function cacheNotionDataToRedis() {
     }
 
     // Store the fetched data in Redis
-    console.log('Storing fetched data in Redis...');
+    console.error('Storing fetched data in Redis...'); // Log to Vercel logs
     await setAsync('notionData', JSON.stringify(allData), 'EX', 60 * 60 * 24 * 7); // Cache for 7 days
-    console.log('Data stored in Redis successfully');
+    console.error('Data stored in Redis successfully'); // Log to Vercel logs
     
   } catch (error) {
-    console.error('Error occurred:', error);
+    console.error('Error occurred:', error); // Log to Vercel logs
 
     // Add additional error handling logic here, if needed.
     // For example, you can check the type of error and take specific actions.
