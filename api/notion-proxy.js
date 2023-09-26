@@ -1,9 +1,7 @@
 const axios = require('axios');
 
-} catch (error) {
-    console.error('Error occurred:', error.message, error.stack);
-    res.status(500).send(`Internal Server Error: ${error.message}`);
-}
+
+
 
 
 module.exports = async (req, res) => {
