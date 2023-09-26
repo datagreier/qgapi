@@ -46,6 +46,9 @@ async function cacheNotionDataToRedis() {
     
   } catch (error) {
     console.error('Error occurred:', error);
+
+    // Add additional error handling logic here, if needed.
+    // For example, you can check the type of error and take specific actions.
   } finally {
     // Close the Redis client when done
     client.quit();
