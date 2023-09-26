@@ -25,13 +25,13 @@ async function cacheNotionDataToRedis() {
 
     // Paginate through all pages in Notion database
     while (hasNextPage) {
-      console.error('Fetching data from Notion API...'); // Log to Vercel logs
+      console.log('Fetching data from Notion API...'); // Log to Vercel logs
       const notionResponse = await axios.post(
         notionUrl,
         startCursor ? { start_cursor: startCursor } : {},
         { headers }
       );
-      console.error('Data received from Notion:', notionResponse.data); // Log to Vercel logs
+      console.log('Data received from Notion:', notionResponse.data); // Log to Vercel logs
 
       allData = allData.concat(notionResponse.data.results);
       
@@ -40,9 +40,9 @@ async function cacheNotionDataToRedis() {
     }
 
     // Store the fetched data in Redis
-    console.error('Storing fetched data in Redis...'); // Log to Vercel logs
+    console.log('Storing fetched data in Redis...'); // Log to Vercel logs
     await setAsync('notionData', JSON.stringify(allData), 'EX', 60 * 60 * 24 * 7); // Cache for 7 days
-    console.error('Data stored in Redis successfully'); // Log to Vercel logs
+    console.log('Data stored in Redis successfully'); // Log to Vercel logs
     
   } catch (error) {
     console.error('Error occurred:', error); // Log to Vercel logs
@@ -52,6 +52,7 @@ async function cacheNotionDataToRedis() {
   } finally {
     // Close the Redis client when done
     client.quit();
+    console.log('Redis client closed.'); // Log to Vercel logs
   }
 }
 
