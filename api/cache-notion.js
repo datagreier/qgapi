@@ -7,6 +7,7 @@ const GITHUB_TOKEN = 'github_pat_11AOAXUCY0hKKquIEeQJTa_ciNurv5etHZ94EiQ8SplrdEJ
 const GITHUB_OWNER = 'datagreier';
 const GITHUB_REPO = 'qgdata';
 const FILE_PATH = 'tree/main/dbcache/data.json';
+const PAGE_SIZE = 5; // Number of pages to fetch from Notion
 
 async function fetchNotionData() {
   try {
@@ -18,20 +19,37 @@ async function fetchNotionData() {
     };
 
     console.log('Fetching data from Notion API...');
-    const notionResponse = await fetch(notionUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({}),
-    });
 
-    if (!notionResponse.ok) {
-      throw new Error('Failed to fetch data from Notion');
+    const pages = [];
+    let hasMore = true;
+    let startCursor = undefined;
+
+    while (hasMore && pages.length < PAGE_SIZE) {
+      const body = {};
+      if (startCursor) {
+        body.start_cursor = startCursor;
+      }
+
+      const notionResponse = await fetch(notionUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      if (!notionResponse.ok) {
+        throw new Error('Failed to fetch data from Notion');
+      }
+
+      const data = await notionResponse.json();
+
+      pages.push(...data.results);
+      hasMore = data.has_more;
+      startCursor = data.next_cursor;
     }
 
-    const data = await notionResponse.json();
-    console.log('Data received from Notion:', data);
+    console.log('Data received from Notion:', pages);
 
-    await pushDataToGitHub(JSON.stringify(data, null, 2));
+    await pushDataToGitHub(JSON.stringify(pages, null, 2));
   } catch (error) {
     console.error('Error occurred:', error);
   }
