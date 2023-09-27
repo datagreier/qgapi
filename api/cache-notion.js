@@ -1,59 +1,86 @@
-const axios = require('axios');
-const redis = require('redis');
-const { promisify } = require('util');
+const fetch = require('node-fetch');
+const fs = require('fs/promises');
+const { DateTime } = require('luxon'); // You may need to install the luxon library
 
 const NOTION_API_KEY = "secret_L5EkN7Il9rEm9QfPNKRx8Lca5Q6m0sfyvK9yoYMtw9Z";
 const NOTION_DATABASE_ID = "c68a45e247104d2c9099c729477cda69";
-const REDIS_URL = "redis://quizguru-vercel:bNhwb7uv6qzZM18-n@redis-18451.c59.eu-west-1-2.ec2.cloud.redislabs.com:18451";
 
-const client = redis.createClient(REDIS_URL);
-const setAsync = promisify(client.set).bind(client);
+const GITHUB_TOKEN = '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';
+const GITHUB_REPO = 'datagreier/qgdata';
+const FILE_PATH = 'qgdata/dbcache/data.json';
+const COMMIT_MESSAGE = 'Update data from Notion';
 
-async function cacheNotionDataToRedis() {
+async function fetchNotionData() {
   try {
     // Initialize Notion API URL and headers
     const notionUrl = `https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`;
     const headers = {
       Authorization: `Bearer ${NOTION_API_KEY}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
     };
-    
+
     let hasNextPage = true;
     let startCursor = null;
     let allData = [];
 
     // Paginate through all pages in Notion database
     while (hasNextPage) {
-      console.log('Fetching data from Notion API...'); // Log to Vercel logs
-      const notionResponse = await axios.post(
-        notionUrl,
-        startCursor ? { start_cursor: startCursor } : {},
-        { headers }
-      );
-      console.log('Data received from Notion:', notionResponse.data); // Log to Vercel logs
+      console.log('Fetching data from Notion API...');
+      const notionResponse = await fetch(notionUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(startCursor ? { start_cursor: startCursor } : {}),
+      });
 
-      allData = allData.concat(notionResponse.data.results);
-      
-      hasNextPage = notionResponse.data.has_more;
-      startCursor = notionResponse.data.next_cursor;
+      if (!notionResponse.ok) {
+        throw new Error('Failed to fetch data from Notion');
+      }
+
+      const data = await notionResponse.json();
+      console.log('Data received from Notion:', data);
+
+      allData = allData.concat(data.results);
+
+      hasNextPage = data.has_more;
+      startCursor = data.next_cursor;
     }
 
-    // Store the fetched data in Redis
-    console.log('Storing fetched data in Redis...'); // Log to Vercel logs
-    await setAsync('notionData', JSON.stringify(allData), 'EX', 60 * 60 * 24 * 7); // Cache for 7 days
-    console.log('Data stored in Redis successfully'); // Log to Vercel logs
-    
-  } catch (error) {
-    console.error('Error occurred:', error); // Log to Vercel logs
+    // Format your Notion data as needed (e.g., JSON)
+    const formattedData = {
+      // Your formatted data here
+    };
 
-    // Add additional error handling logic here, if needed.
-    // For example, you can check the type of error and take specific actions.
-  } finally {
-    // Close the Redis client when done
-    client.quit();
-    console.log('Redis client closed.'); // Log to Vercel logs
+    // Backup the previous data.json file with a timestamp
+    await backupOldData();
+
+    // Write the new data.json file
+    await writeDataToFile(formattedData);
+
+    console.log('Data pushed to GitHub successfully');
+  } catch (error) {
+    console.error('Error occurred:', error);
   }
 }
 
-cacheNotionDataToRedis();
+async function backupOldData() {
+  try {
+    const timestamp = DateTime.now().toFormat('yyyyMMddHHmmss');
+    const oldFilePath = `qgdata/dbcache/data_${timestamp}.json`;
+    await fs.copyFile(FILE_PATH, oldFilePath);
+    console.log(`Previous data.json file backed up as ${oldFilePath}`);
+  } catch (error) {
+    console.error('Error backing up previous data:', error);
+  }
+}
+
+async function writeDataToFile(data) {
+  try {
+    await fs.writeFile(FILE_PATH, JSON.stringify(data, null, 2));
+    console.log('New data.json file written successfully');
+  } catch (error) {
+    console.error('Error writing new data.json:', error);
+  }
+}
+
+fetchNotionData();
