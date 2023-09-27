@@ -3,7 +3,7 @@ const { Octokit } = require('@octokit/rest');
 
 const NOTION_API_KEY = "secret_L5EkN7Il9rEm9QfPNKRx8Lca5Q6m0sfyvK9yoYMtw9Z";
 const NOTION_DATABASE_ID = "c68a45e247104d2c9099c729477cda69";
-const GITHUB_TOKEN = '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';
+const GITHUB_TOKEN = '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';
 const GITHUB_OWNER = 'datagreier';
 const GITHUB_REPO = 'qgdata';
 const FILE_PATH = 'tree/main/dbcache/data.json';
