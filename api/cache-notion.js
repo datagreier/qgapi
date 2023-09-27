@@ -6,7 +6,7 @@ const NOTION_DATABASE_ID = "c68a45e247104d2c9099c729477cda69";
 const GITHUB_TOKEN = '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';
 const GITHUB_OWNER = 'datagreier';
 const GITHUB_REPO = 'qgdata';
-const FILE_PATH = 'dbcache/data.json';
+const FILE_PATH = 'tree/main/dbcache/data.json';
 
 async function fetchNotionData() {
   try {
